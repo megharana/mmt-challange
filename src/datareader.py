@@ -7,8 +7,8 @@ from sklearn.model_selection import train_test_split
 import os
 
 
-def prepare_data(data_file_path):
-    
+def prepare_data(data_file_path, test_file_labels_list):
+
     df = pd.read_csv(data_file_path, index_col=0, parse_dates=True) #reading from train.csv
 
     df.replace('?', np.nan, inplace=True) #for replacing Nan value
@@ -17,9 +17,12 @@ def prepare_data(data_file_path):
     # Convert categorical variable into dummy/indicator variables
     # See https://pandas.pydata.org/pandas-docs/stable/generated/pandas.get_dummies.html#pandas-get-dummies for more details
     df = pd.get_dummies(df)
+    print(list(df))
+    df = df.drop(columns=['G_o', 'M_p', 'E_gg', 'D_l'])
 
     #Split data into test set and cross-validation set
     df_train, df_cv = train_test_split(df, test_size=0.2)
+    print(list(df_train))
 
     #Determine number of rows and columns in each data frame
     num_train_entries = df.shape[0]
@@ -47,16 +50,19 @@ def prepare_data(data_file_path):
 
 def prepare_data_test(data_test_path):
 
-    df = pd.read_csv(data_test_path, index_col=0, parse_dates=True) #reading from test.csv
+    df_test = pd.read_csv(data_test_path, index_col=0, parse_dates=True) #reading from test.csv
 
-    df.replace('?', np.nan, inplace=True) #for replacing Nan value
-    df.dropna(inplace=True)
+
+    df_test.replace('?', np.nan, inplace=True) #for replacing Nan value
+    df_test.dropna(inplace=True)
 
     # Convert categorical variable into dummy/indicator variables
     # See https://pandas.pydata.org/pandas-docs/stable/generated/pandas.get_dummies.html#pandas-get-dummies for more details
-    df = pd.get_dummies(df)
+    df_test = pd.get_dummies(df_test)
 
-    df.to_csv('data_test.csv', index=False)
+
+    df_test.to_csv('data_test.csv', index=False)
+    return(list(df_test))
 
 
 # Get the cv inputs
@@ -79,8 +85,9 @@ def get_test_inputs():
 
 
 #preparing  training, cross-validation and test data sets
-prepare_data("../dataset/train.csv")
-prepare_data_test("../dataset/test.csv")
+labels_list = prepare_data_test("../dataset/test.csv")
+prepare_data("../dataset/train.csv", labels_list)
+
 
 
 # Load datasets.
@@ -100,14 +107,13 @@ cv_set = tf.contrib.learn.datasets.base.load_csv_with_header(
 
 
 # Specify that all features have real-value data
-feature_columns = [tf.contrib.layers.real_valued_column("", dimension=46)]
+feature_columns = [tf.contrib.layers.real_valued_column("", dimension=42)]
 
 # Build 3 layer DNN with 10, 20, 10 units respectively.
 classifier = tf.contrib.learn.DNNClassifier(
     feature_columns=feature_columns,
     hidden_units=[10, 20, 10],
-    n_classes=2,
-    model_dir="/tmp/mmt_model")
+    n_classes=2)
 
 
 # Fit model.
@@ -115,13 +121,11 @@ classifier.fit(input_fn=get_train_inputs, steps=2000)
 
 # Evaluate accuracy.
 accuracy_score = classifier.evaluate(input_fn=get_cv_inputs,
-                                     steps=1)
+                                     steps=1)['accuracy']
 
 print("\nTest Accuracy: {0:f}\n".format(accuracy_score))
 
 # NEEDS-ATTENTION
-predictions = classifier.predict(
-    input_fn=get_test_inputs)
+predictions = list(classifier.predict(input_fn=get_test_inputs))
 
 print("New Samples, Class Predictions:    {}\n".format(predictions))
-
