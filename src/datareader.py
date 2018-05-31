@@ -81,7 +81,12 @@ def get_train_inputs():
 
 # Get test inputs
 def get_test_inputs():
-  return genfromtxt(fname = "data_test.csv", dtype = np.float)
+  import csv
+  with open('data_test.csv', 'r') as f:
+      reader = csv.reader(f)
+      my_list = list(reader)
+  my_list.pop(0)
+  return np.array(my_list, dtype=float)
 
 
 #preparing  training, cross-validation and test data sets
@@ -112,7 +117,7 @@ feature_columns = [tf.contrib.layers.real_valued_column("", dimension=42)]
 # Build 3 layer DNN with 10, 20, 10 units respectively.
 classifier = tf.contrib.learn.DNNClassifier(
     feature_columns=feature_columns,
-    hidden_units=[10, 20, 10],
+    hidden_units=[20, 40, 20],
     n_classes=2)
 
 
@@ -128,4 +133,4 @@ print("\nTest Accuracy: {0:f}\n".format(accuracy_score))
 # NEEDS-ATTENTION
 predictions = list(classifier.predict(input_fn=get_test_inputs))
 
-print("New Samples, Class Predictions:    {}\n".format(predictions))
+print("New Samples, Class Predictions:{}\n".format(predictions))
