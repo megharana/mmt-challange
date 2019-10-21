@@ -86,7 +86,7 @@ uritemplate.py==3.0.2
 urllib3==1.22
 watchdog==0.8.3
 wcwidth==0.1.7
-Werkzeug==0.14.1
+Werkzeug==0.15.3
 whelk==2.7.1
 whitenoise==3.3.1
 zope.interface==4.4.3
