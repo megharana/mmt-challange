@@ -57,7 +57,7 @@ protobuf==3.5.1
 psycopg2==2.7.4
 ptyprocess==0.5.2
 pyelftools==0.24
-Pygments==2.2.0
+Pygments==2.7.4
 pykwalify==1.6.1
 pyserial==3.4
 python-dateutil==2.6.1
