@@ -28,7 +28,7 @@ git-spindle==3.4.4
 github3.py==0.9.6
 gitlint==0.10.0
 gunicorn==19.8.1
-html5lib==0.9999999
+html5lib==0.999999999
 hub==2.0
 hyperlink==18.0.0
 idna==2.6
