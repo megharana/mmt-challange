@@ -80,7 +80,7 @@ sphinxcontrib-websupport==1.0.1
 tensorflow==1.5.0
 tensorflow-tensorboard==1.5.1
 traitlets==4.3.2
-Twisted==17.9.0
+Twisted==22.10.0
 uritemplate==3.0.0
 uritemplate.py==3.0.2
 urllib3==1.22
